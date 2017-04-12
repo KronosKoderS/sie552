@@ -1,0 +1,6 @@
+﻿,Mass (kg),Peak Power (W),Avg Power (W),Temp Op Low (°C),Temp Op High (°C),Temp Low (°C),Temp High (°C)
+NAC,16.4,9.3,6.4,0,20,-40,25
+WAC,0.9,2.7,2.6,-20,30,-30,40
+TEIS,11.2,14,14,-30,30,-30,45
+HEND,26.3,13,13,-20,50,-20,50
+LA,25,33.1,23.1,-20,30,-30,40
