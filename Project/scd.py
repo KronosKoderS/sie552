@@ -22,8 +22,6 @@ class PlanetaryObject():
         self.fp = fp       # Flight Path Angle
         self.mu = mu       # Gravitation parameter
 
-     
-mu_sun = 132712439935.5
         
 def eccentricity(r_1, r_2, theta_1, theta_2):
     """
@@ -225,3 +223,61 @@ def transfer_ellipse(start_planet, end_planet, return_trials=False):
         r_dict.update({'runs':{'longs': longs, 'tofs':tofs}})
         
     return r_dict
+
+
+def solar_torque(P, A, L, q):
+    """
+    Calculates the solar torque (T) based on the Solar Pressure (P), spacecraft Area (A), 
+    distance from centroid of surface A (L), and reflective factor (q)
+    
+    This function uses the following formula:
+        
+        T = P * A * L * (1 + q)
+    
+    
+    Parameters:
+    -----------
+    :param P: Solar Pressure of the orbiting planet (in W/m^2)
+    :param A: Area of the spacecraft side (in m^2)
+    :param L: Distance from the centroid of the surface A (in m)
+    :param q: Reflectance factor between 0 and 1
+    """
+    if not 0 <= q <=1:
+        raise ValueError("q must be between 0 and 1")
+    return P * A * L * (1 + q)
+
+
+def magnetic_torque(D, B=None, M=None, r=None):
+    """
+    Calculates the magnetic torque on a space craft orbiting a planetary object based on the 
+    residule dipole (D) of the spacecraft and the planetary object's magnetic field (B).
+    
+    This function uses the following formula:
+    
+        T = 10e-7 * D * B
+        
+    Where:
+        
+        B = 2 * M / r^3
+        
+    If B isn't defined, it's assumed that M and r will be, otherwise a ValueError is raised.  
+    If B is defined, the function uses that value, even when M and/or r is defined.  
+    
+    Parameters:
+    -----------
+    :param D: Residual dipole of the spacecraft (in pole-cm)
+    :param B: Planetary object's magnetic field (in gauss)
+    :param M: Magnetic moment of the planetary object (in emu)
+    :param r: Spacecraft orbital radius (in cm)
+    """
+    if B is None and (M is None or r is None):
+        raise ValueError("B or M and r must be defined!")
+    
+    if B is None:
+        B = 2 * M / r ** 3
+        
+    return 10 ** -7 * D * B
+
+
+def gravity_gradient_torque(u, r, I_z, I_y, theta):
+    return 3 * u / r ** 3 * abs(I_z - I_y) * theta
