@@ -247,18 +247,18 @@ def solar_torque(P, A, L, q):
     return P * A * L * (1 + q)
 
 
-def magnetic_torque(D, B=None, M=None, r=None):
+def magnetic_torque(theta, B=None, B_0=None, r_0=None, L=None):
     """
     Calculates the magnetic torque on a space craft orbiting a planetary object based on the 
     residule dipole (D) of the spacecraft and the planetary object's magnetic field (B).
     
     This function uses the following formula:
     
-        T = 10e-7 * D * B
+        T = M * B * sin(theta)
         
     Where:
         
-        B = 2 * M / r^3
+        B = ((B_0 * r_0^3) / (r^3)) * (3 sin^2(L) + 1)^(1/2)
         
     If B isn't defined, it's assumed that M and r will be, otherwise a ValueError is raised.  
     If B is defined, the function uses that value, even when M and/or r is defined.  
@@ -270,13 +270,13 @@ def magnetic_torque(D, B=None, M=None, r=None):
     :param M: Magnetic moment of the planetary object (in emu)
     :param r: Spacecraft orbital radius (in cm)
     """
-    if B is None and (M is None or r is None):
+    if B is None and (B_0 is None or r_0 is None or L is None):
         raise ValueError("B or M and r must be defined!")
     
     if B is None:
-        B = 2 * M / r ** 3
+        B = ((B_0 * r_0**3) / (r**3)) * (3 * np.sin(L)**2 + 1) ** (1/2)
         
-    return 10 ** -7 * D * B
+    return M * B * np.sin(theta)
 
 
 def gravity_gradient_torque(u, r, I_z, I_y, theta):
